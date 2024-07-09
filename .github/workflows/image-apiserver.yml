@@ -1,0 +1,54 @@
+name: Build image - API Server
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Image publish version'
+        default: 'latest'
+        required: true
+        type: string
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to the Harbor registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.HARBOR_REPO }}
+          username: ${{ secrets.HARBOR_USER }}
+          password: ${{ secrets.HARBOR_TOKEN }}
+          
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ vars.HARBOR_REPO }}/hornbill-api
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+            type=raw,priority=1100,value=${{ inputs.version }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          file: "apiserver.Dockerfile"
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=user/app:latest
+          cache-to: type=inline

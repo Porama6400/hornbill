@@ -1,0 +1,15 @@
+cfssl/ca
+cfssl/client
+cfssl/server
+.idea
+.env
+*.exe
+
+build/daemon/bin/
+build/daemon/etc/ca.pem
+build/daemon/etc/server.csr
+build/daemon/etc/server.pem
+build/daemon/etc/server-key.pem
+
+daemon-linux-amd64
+daemon.zip

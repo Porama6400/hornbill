@@ -1,0 +1,145 @@
+definitions:
+  apiserver.Daemon:
+    properties:
+      address:
+        type: string
+      id:
+        type: string
+    type: object
+  apiserver.DaemonUserEntry:
+    properties:
+      daemon:
+        $ref: '#/definitions/apiserver.Daemon'
+      users:
+        items:
+          $ref: '#/definitions/pb.User'
+        type: array
+    type: object
+  auth.ResultErrorMessage:
+    properties:
+      error:
+        type: string
+    type: object
+  pb.Identity:
+    properties:
+      expiry:
+        type: integer
+      id:
+        type: string
+      privateKey:
+        type: string
+      publicKey:
+        type: string
+    type: object
+  pb.Result:
+    properties:
+      message:
+        type: string
+      ok:
+        type: boolean
+    type: object
+  pb.ResultAdd:
+    properties:
+      message:
+        type: string
+      ok:
+        type: boolean
+      serverInfo:
+        $ref: '#/definitions/pb.ServerInfo'
+      user:
+        $ref: '#/definitions/pb.User'
+    type: object
+  pb.ServerInfo:
+    properties:
+      publicAddress:
+        type: string
+      publicKey:
+        type: string
+    type: object
+  pb.User:
+    properties:
+      address:
+        type: string
+      identity:
+        $ref: '#/definitions/pb.Identity'
+    type: object
+info:
+  contact: {}
+paths:
+  /api/list:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/apiserver.DaemonUserEntry'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/auth.ResultErrorMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/auth.ResultErrorMessage'
+  /api/login/{server}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Body
+        in: body
+        name: req
+        schema:
+          $ref: '#/definitions/pb.Identity'
+      - description: Server ID
+        in: path
+        name: server
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pb.ResultAdd'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/auth.ResultErrorMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/auth.ResultErrorMessage'
+  /api/logout/{server}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Server ID
+        in: path
+        name: server
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pb.Result'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/auth.ResultErrorMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/auth.ResultErrorMessage'
+swagger: "2.0"

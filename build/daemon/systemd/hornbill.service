@@ -1,0 +1,13 @@
+[Unit]
+Description=Hornbill Daemon
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/hornbill-daemon
+WorkingDirectory=/etc/hornbill
+Type=simple
+Restart=always
+
+[Install]
+WantedBy=default.target
+RequiredBy=network.target

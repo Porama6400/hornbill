@@ -1,0 +1,19 @@
+{
+  "hosts": [
+    "localhost",
+    "127.0.0.1"
+  ],
+  "key": {
+    "algo": "rsa",
+    "size": 4096
+  },
+  "names": [
+    {
+      "C":  "TH",
+      "L":  "Bangkok",
+      "O":  "Test, Inc.",
+      "OU": "WWW",
+      "ST": "Bangkok"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+syntax = "proto3";
+option go_package = "pkg/pb";
+
+message Empty {
+
+}
+
+message Result {
+  bool ok = 1;
+  string message = 2;
+}
+
+message Identity {
+  string id = 1;
+  string publicKey = 2;
+  string privateKey = 3;
+  optional int64 expiry = 4;
+}
+
+message ServerInfo{
+  string publicKey = 1;
+  string publicAddress = 2;
+  repeated string allowedAddress = 3;
+}
+
+message User {
+  Identity identity = 1;
+  string address = 2;
+}
+
+message UserList {
+  repeated User users = 1;
+}
+
+message ResultAdd{
+  bool ok = 1;
+  string message = 2;
+  User user = 3;
+  optional ServerInfo serverInfo = 4;
+
+}
+
+service Daemon {
+  rpc ping(Empty) returns (Empty);
+  rpc tick(Empty) returns (Result);
+  rpc add(Identity) returns (ResultAdd);
+  rpc remove(Identity) returns (Result);
+  rpc list(Empty) returns (UserList);
+}
